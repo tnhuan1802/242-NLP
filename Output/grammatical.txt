@@ -1,0 +1,1 @@
+['(WHICH m1 MÁY BAY)', '(m1 PRED ĐẾN)', '(m1 LSUBJ MÁY BAY)', '(m1 TO-LOC HUE)', '(m1 AT-TIME 13:30HR)']

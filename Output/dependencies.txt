@@ -1,0 +1,1 @@
+['which(máy bay, nào)', 'nsubj(đến, máy bay)', 'to-loc(Huế, đến)', 'at-time(13:30HR, lúc)', 'question(đến, ?)', 'root(root, đến)']
