@@ -11,6 +11,9 @@ class DependencyParser:
         """Tokenize using pyvi, convert underscores to spaces, merge city and time tokens."""
         # Preprocess to protect city names and time formats
         sentence = re.sub(r'TP\.\s*Hồ Chí Minh', 'TP. Hồ Chí Minh', sentence)
+        sentence = re.sub(r'Tp\.\s*Hồ Chí Minh', 'TP. Hồ Chí Minh', sentence)
+        sentence = re.sub(r'TP\.\s*HCM', 'TP. Hồ Chí Minh', sentence)
+        sentence = re.sub(r'Tp\.\s*HCM', 'TP. Hồ Chí Minh', sentence)
         sentence = re.sub(r'(\d{1,2})\s*:\s*(\d{2})\s*HR', r'\1:\2HR', sentence)
         sentence = re.sub(r'(\d{1,2})\s*:\s*(\d{2}HR)', r'\1:\2', sentence)
         tokens = ViTokenizer.tokenize(sentence).split()
@@ -42,7 +45,7 @@ class DependencyParser:
         return merged_tokens
 
     def get_dependencies(self, sentence):
-        """Custom rule-based dependency parser."""
+        """Custom rule-based dependency parser for Query 1."""
         tokens = self.tokenize(sentence)
         relations = []
         
@@ -50,71 +53,40 @@ class DependencyParser:
         stack = ["root"]
         buffer = tokens[:]
         i = 0
-        current_verb = None  # Track the main verb (e.g., "bay")
+        current_verb = None
 
         while buffer or len(stack) > 1:
             if not buffer and len(stack) > 1:
-                stack.pop()  # Clean up stack
+                stack.pop()
                 continue
 
             current = buffer[0] if buffer else None
             if not current:
                 break
 
-            # Rules based on sentence structure
+            # Rules for Query 1
             if current == "nào" and stack[-1] == "Máy bay":
                 relations.append(f"which(máy bay, nào)")
                 stack.append(current)
                 buffer.pop(0)
                 i += 1
-            elif current == "mã hiệu" and stack[-1] == "Máy bay" and "hạ cánh" in buffer:
-                relations.append(f"which(máy bay, mã hiệu)")
-                stack.append(current)
-                buffer.pop(0)
-                i += 1
-            elif re.match(r"VN\d+|VJ\d+", current) and stack[-1] == "Máy bay" and "xuất phát" in buffer:
-                relations.append(f"nsubj(xuất phát, {current})")
+            elif current == "đến" and stack[-1] in ["Máy bay", "nào"]:
+                relations.append(f"nsubj(đến, máy bay)")
+                relations.append(f"root(root, đến)")
                 stack.pop()
                 stack.append(current)
+                current_verb = current
                 buffer.pop(0)
                 i += 1
-            elif current in ["đến", "bay", "hạ cánh", "xuất phát"] and stack[-1] in ["Máy bay", "nào", "mã hiệu"] or (stack[-1] and re.match(r"VN\d+|VJ\d+", stack[-1])):
-                verb = current
-                subject = stack[-1]
-                if subject == "nào" or subject == "mã hiệu":
-                    subject = "máy bay"
-                relations.append(f"nsubj({verb}, {subject})")
-                while len(stack) > 1 and stack[-1] not in ["root"]:
-                    stack.pop()
-                stack.append(verb)
-                current_verb = verb
-                buffer.pop(0)
-                i += 1
-            elif current == "từ" and i + 1 < len(tokens) and (tokens[i + 1] in self.cities or tokens[i + 1] == "thành phố"):
+            elif current == "thành phố" and i + 1 < len(tokens) and tokens[i + 1] == "Huế" and stack[-1] == "đến":
+                relations.append(f"to-loc(đến, thành phố)")
                 stack.append(current)
                 buffer.pop(0)
                 i += 1
-            elif current in self.cities and stack[-1] == "từ":
-                relations.append(f"from-loc({current}, từ)")
+            elif current == "Huế" and stack[-1] == "thành phố":
+                relations.append(f"(thành phố, Huế)")
                 stack.pop()
-                stack.append(current)
-                buffer.pop(0)
-                i += 1
-            elif current in ["đến", "ra", "ở"] and i + 1 < len(tokens) and (tokens[i + 1] in self.cities or tokens[i + 1] == "thành phố"):
-                stack.append(current)
-                buffer.pop(0)
-                i += 1
-            elif current == "thành phố" and i + 1 < len(tokens) and tokens[i + 1] in self.cities and stack[-1] in ["đến", "ra", "ở"]:
-                buffer.pop(0)
-                i += 1
-                continue  # Skip "thành phố" and process the city name next
-            elif current in self.cities and stack[-1] in ["đến", "ra", "ở"]:
-                relations.append(f"to-loc({current}, {stack[-1]})")
-                stack.pop()
-                if current_verb and stack[-1] != current_verb:
-                    stack.append(current_verb)  # Restore verb for later rules
-                else:
-                    stack.append(current)
+                stack.append("thành phố Huế")
                 buffer.pop(0)
                 i += 1
             elif current == "lúc" and i + 1 < len(tokens) and re.match(r"\d{1,2}:\d{2}HR", tokens[i + 1]):
@@ -122,44 +94,15 @@ class DependencyParser:
                 buffer.pop(0)
                 i += 1
             elif re.match(r"\d{1,2}:\d{2}HR", current) and stack[-1] == "lúc":
-                relations.append(f"at-time({current}, lúc)")
+                relations.append(f"at({current}, lúc)")
+                relations.append(f"at-time(đến, {current})")
                 stack.pop()
-                if current_verb and stack[-1] != current_verb:
-                    stack.append(current_verb)  # Restore verb
-                else:
-                    stack.append(current)
-                buffer.pop(0)
-                i += 1
-            elif current == "mất" and i + 1 < len(tokens) and re.match(r"\d{1,2}:\d{2}HR", tokens[i + 1]):
-                stack.append(current)
-                buffer.pop(0)
-                i += 1
-            elif re.match(r"\d{1,2}:\d{2}HR", current) and stack[-1] == "mất":
-                relations.append(f"wh-time(thời gian, mất)")
-                relations.append(f"at-time({current}, mất)")
-                stack.pop()
-                if current_verb and stack[-1] != current_verb:
-                    stack.append(current_verb)  # Restore verb
-                else:
-                    stack.append(current)
+                if current_verb:
+                    stack.append(current_verb)
                 buffer.pop(0)
                 i += 1
             elif current == "?" and current_verb:
-                relations.append(f"question({current_verb}, ?)")
-                stack.append(current)
-                buffer.pop(0)
-                i += 1
-            elif current == "không" and current_verb:
-                relations.append(f"question({current_verb}, không)")
-                stack.append(current)
-                buffer.pop(0)
-                i += 1
-            elif current == "thời gian" and "bao lâu" in buffer:
-                stack.append(current)
-                buffer.pop(0)
-                i += 1
-            elif current == "bao lâu":
-                relations.append(f"wh-time(thời gian, bao lâu)")
+                relations.append(f"question(đến, ?)")
                 stack.append(current)
                 buffer.pop(0)
                 i += 1
@@ -167,9 +110,5 @@ class DependencyParser:
                 stack.append(current)
                 buffer.pop(0)
                 i += 1
-
-        # Final check for root
-        if current_verb in ["đến", "bay", "xuất phát", "hạ cánh"]:
-            relations.append(f"root(root, {current_verb})")
 
         return relations

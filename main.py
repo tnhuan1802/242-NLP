@@ -4,9 +4,27 @@ from Models.processor import QueryProcessor
 from Models.database import FlightDatabase
 
 def write_output(filename, data):
-    """Write data to output file."""
+    """Write data to output file, converting lists to strings."""
     with open(os.path.join("Output", filename), "a", encoding="utf-8") as f:
-        f.write(str(data) + "\n")
+        if isinstance(data, list):
+            if filename == "logical.txt":
+                # Join logical form list into a single string without extra spaces
+                data_str = "".join(data)
+            elif filename == "procedural.txt":
+                # Join procedural form list into a string with specific formatting
+                if len(data) >= 2:
+                    data_str = f"(PRINT-ALL {data[1]} {''.join(data[2:])})"
+                else:
+                    data_str = str(data)
+            elif filename == "answers.txt":
+                # Join logical form list into a single string without extra spaces
+                data_str = ", ".join(data)
+            else:
+                # Join other lists (e.g., tokens, dependencies, grammatical) with commas
+                data_str = str(data)
+        else:
+            data_str = str(data)
+        f.write(data_str + "\n")
 
 def main():
     os.makedirs("Output", exist_ok=True)
@@ -27,7 +45,7 @@ def main():
         write_output("logical.txt", result["logical"])
         write_output("procedural.txt", result["procedural"])
         answer = db.query(result["procedural"])
-        write_output("answers.txt", f"Query: {query}\nAnswer: {answer}\n")
+        write_output("answers.txt", f"{', '.join(answer)}")
 
 if __name__ == "__main__":
     main()

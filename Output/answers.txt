@@ -1,3 +1,2 @@
-Query: Máy bay nào đến thành phố Huế lúc 13:30HR?
-Answer: No results found
-
+VJ1
+VJ1, VJ2, VJ3, VJ4, VJ5, VN1, VN2, VN3, VN4, VN5
