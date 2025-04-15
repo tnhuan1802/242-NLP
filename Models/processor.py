@@ -7,6 +7,7 @@ class QueryProcessor:
 
     def process(self, query):
         """Process query through all steps."""
+        print('Processing query:', query)
         tokens = self.parser.tokenize(query)
         dependencies = self.parser.get_dependencies(query) or []  # Ensure non-None
         grammatical = self.dependencies_to_grammatical(dependencies, query)
@@ -38,21 +39,25 @@ class QueryProcessor:
             elif "to-loc" in dep:
                 parts = dep.split("(")[1].split(")")[0].split(", ")
                 if parts[1] == "thành phố":
-                    city_unit = "THÀNH PHỐ-HUẾ"
-                elif parts[0] == "TP. Hồ Chí Minh":
+                    city_unit = "thành phố"  # Mark for later city combination
+                    continue
+                elif parts[0] != "đến" and parts[0] in self.parser.cities:
                     grammatical.append(["TO-LOC", "m1", parts[0].upper()])
-                else:
-                    grammatical.append(["TO-LOC", "m1", parts[0].upper()])
+                elif parts[0] == "đến" and parts[1] in self.parser.cities:
+                    grammatical.append(["TO-LOC", "m1", parts[1].upper()])
                 continue
             elif "nmod" in dep:
                 parts = dep.split("(")[1].split(")")[0].split(", ")
-                if parts[0] == "thành phố" and parts[1] == "Huế":
+                if parts[0] == "thành phố" and parts[1] in self.parser.cities:
                     if city_unit:
-                        grammatical.append(["TO-LOC", "m1", city_unit])
+                        grammatical.append(["TO-LOC", "m1", f"THÀNH PHỐ-{parts[1].upper()}"])
                         city_unit = None
             elif "from-loc" in dep:
                 parts = dep.split("(")[1].split(")")[0].split(", ")
-                grammatical.append(["FROM-LOC", "m1", parts[0].upper()])
+                if parts[0] == "từ" and parts[1] in self.parser.cities:
+                    grammatical.append(["FROM-LOC", "m1", parts[1].upper()])
+                elif parts[1] == "từ" and parts[0] in self.parser.cities:
+                    grammatical.append(["FROM-LOC", "m1", parts[0].upper()])
             elif "at(" in dep:
                 parts = dep.split("(")[1].split(")")[0].split(", ")
                 grammatical.append(["AT-TIME", "m1", parts[0].upper()])
@@ -75,7 +80,7 @@ class QueryProcessor:
             elif g[0] == "PRED":
                 pred = g[2]
             elif g[0] == "LSUBJ":
-                args.append("[ MÁY BAY ]")
+                args.append("[MÁY BAY]")
             elif g[0] == "TO-LOC":
                 args.append(f"[TO-LOC {g[2]}]")
             elif g[0] == "FROM-LOC":
@@ -104,24 +109,42 @@ class QueryProcessor:
                     source = from_match.group(1).strip()
                     dest = to_match.group(1).strip()
                     time = time_match.group(1)
-                    if source == "ĐÀ NẴNG":
-                        source = "ĐN"
-                    if source == "HẢI PHÒNG":
-                        source = "HP"
-                    if dest == "TP. HỒ CHÍ MINH":
-                        dest = "HCMC"
-                    elif dest == "THÀNH PHỐ-HUẾ":
-                        dest = "HUE"
-                    conditions.append(f"(RUN-TIME {var} {source} {dest} {time})")
-            elif "AT-TIME" in l:
-                city_match = re.search(r"TO-LOC ([^\]\[]+)]", l)
-                time_match = re.search(r"AT-TIME (\d{1,2}:\d{2}HR)", l)
+                    if "THÀNH PHỐ" in source:
+                        source = source.split("-")[1]
+                    if "THÀNH PHỐ" in dest:
+                        dest = dest.split("-")[1]
+                    source_short = self.parser.city_mappings[source.title()]
+                    dest_short = self.parser.city_mappings[dest.title()]
+                    conditions.append(f"(RUN-TIME {var} {source_short} {dest_short} {time})")
+            elif "FROM-LOC" in l and "AT-TIME" in l:
+                city_match = re.search(r"FROM-LOC ([^\]\[]+)]", l)
+                time_match = re.search(r"AT-TIME ([^\]\[]+)]", l)
                 if city_match and time_match:
                     city = city_match.group(1).strip()
-                    if city == "THÀNH PHỐ-HUẾ":
-                        city = "HUE"
-                    elif city == "TP. HỒ CHÍ MINH":
-                        city = "HCMC"
-                    time = time_match.group(1)
-                    conditions.append(f"(ATIME {var} {city} {time})")
+                    if "THÀNH PHỐ" in city:
+                        city = city.split("-")[1]
+                    time = time_match.group(1).strip()
+                    city_short = self.parser.city_mappings[city.title()]
+                    if time == "MẤY GIỜ":
+                        conditions.append(f"(DTIME {var} {city_short} ?time)")
+                    else:
+                        conditions.append(f"(DTIME {var} {city_short} {time})")
+            elif "TO-LOC" in l and "AT-TIME" in l:
+                city_match = re.search(r"TO-LOC ([^\]\[]+)]", l)
+                time_match = re.search(r"AT-TIME ([^\]\[]+)]", l)
+                if city_match and time_match:
+                    city = city_match.group(1).strip()
+                    if "THÀNH PHỐ" in city:
+                        city = city.split("-")[1]
+                    time = time_match.group(1).strip()
+                    city_short = self.parser.city_mappings[city.title()]
+                    conditions.append(f"(ATIME {var} {city_short} {time})")
+            elif "TO-LOC" in l and "AT-TIME" not in l:
+                city_match = re.search(r"TO-LOC ([^\]\[]+)]", l)
+                if city_match:
+                    city = city_match.group(1).strip()
+                    if "THÀNH PHỐ" in city:
+                        city = city.split("-")[1]
+                    city_short = self.parser.city_mappings[city.title()]
+                    conditions.append(f"(ATIME {var} {city_short})")
         return ["PRINT-ALL", var] + conditions

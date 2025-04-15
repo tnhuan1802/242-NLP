@@ -1,1 +1,4 @@
 [['WHICH', 'm1', 'MÁY BAY'], ['PRED', 'm1', 'ĐẾN'], ['LSUBJ', 'm1', 'MÁY BAY'], ['TO-LOC', 'm1', 'THÀNH PHỐ-HUẾ'], ['AT-TIME', 'm1', '13:30HR']]
+[['WHICH', 'm1', 'MÁY BAY'], ['PRED', 'm1', 'BAY'], ['LSUBJ', 'm1', 'MÁY BAY'], ['FROM-LOC', 'm1', 'ĐÀ NẴNG'], ['TO-LOC', 'm1', 'TP. HỒ CHÍ MINH'], ['WH-TIME', 'm1', '1:00HR']]
+[['PRED', 'm1', 'HẠ CÁNH'], ['LSUBJ', 'm1', 'MÁY BAY'], ['TO-LOC', 'm1', 'HUẾ']]
+[['WHICH', 'm1', 'MÁY BAY'], ['PRED', 'm1', 'XUẤT PHÁT'], ['LSUBJ', 'm1', 'MÁY BAY'], ['FROM-LOC', 'm1', 'TP. HỒ CHÍ MINH'], ['AT-TIME', 'm1', 'MẤY GIỜ']]

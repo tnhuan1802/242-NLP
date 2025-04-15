@@ -34,7 +34,7 @@ class FlightDatabase:
         return parts[0], parts[1:]
 
     def query(self, procedure):
-        """Query database based on procedural form list."""
+        """Query database based on procedural form list, handling variables."""
         if not procedure or procedure[0] != "PRINT-ALL":
             return "Invalid query"
         
@@ -44,23 +44,56 @@ class FlightDatabase:
         conditions = procedure[2:]
         
         results = []
-        planes = {p for p, _, _ in self.data["ATIME"]} | {p for p, _, _, _ in self.data["RUN-TIME"]}
         for condition in conditions:
             pred, args = self.parse_condition(condition)
+            print(condition)
             if not pred:
                 continue
-            if pred == "MÁY_BAY":
-                continue
-            elif pred == "ATIME" and len(args) >= 3:
-                plane_var, city, time = args
-                matching_planes = {p for p, c, t in self.data["ATIME"] if c == city and t == time}
-                planes &= matching_planes
-            elif pred == "RUN-TIME" and len(args) >= 4:
-                plane_var, source, dest, time = args
-                matching_planes = {p for p, s, d, t in self.data["RUN-TIME"] if s == source and d == dest and t == time}
-                planes &= matching_planes
+            if pred == "MÁY_BAY" and len(args) == 1:
+                var = args
+                results = {p for p in self.data["MÁY_BAY"]}
+            elif pred == "ATIME" and len(args) >= 2:
+                plane_var = args[0]
+                city = args[1] if len(args) > 1 and not args[1].startswith("?") else None
+                time = args[2] if len(args) > 2 and not args[2].startswith("?") else None
+                print(args, city, time)
+                matching_results = results
+                if city:
+                    matching_results &= {p for p, c, t in self.data["ATIME"] if c == city}
+                if time:
+                    matching_results &= {p for p, c, t in self.data["ATIME"] if t == time}
+                results &= matching_results
+            elif pred == "DTIME" and len(args) >= 2:
+                plane_var = args[0]
+                city = args[1] if len(args) > 1 and not args[1].startswith("?") else None
+                time = args[2] if len(args) > 2 and not args[2].startswith("?") else None
+                time_var = args[2] if len(args) > 2 and args[2].startswith("?") else None
+                matching_results = []
+                if city:
+                    if time_var:  # Return plane-time pairs if time is a variable
+                        matching_results = [(p, t) for p, c, t in self.data["DTIME"] if c == city and p in results]
+                        print(matching_results)
+                    else:  # Filter results by concrete time
+                        matching_results = {p for p, c, t in self.data["DTIME"] if c == city and (time is None or t == time)}
+                        results &= matching_results
+                if time_var and matching_results:
+                    results = sorted(matching_results, key=lambda x: x[0])
+                    return results if results else "No results found"
+            elif pred == "RUN-TIME" and len(args) >= 2:
+                plane_var = args[0]
+                source = args[1] if len(args) > 1 and not args[1].startswith("?") else None
+                dest = args[2] if len(args) > 2 and not args[2].startswith("?") else None
+                time = args[3] if len(args) > 3 and not args[3].startswith("?") else None
+                matching_results = set(self.data["MÁY_BAY"])
+                if source:
+                    matching_results &= {p for p, s, d, t in self.data["RUN-TIME"] if s == source}
+                if dest:
+                    matching_results &= {p for p, s, d, t in self.data["RUN-TIME"] if d == dest}
+                if time:
+                    matching_results &= {p for p, s, d, t in self.data["RUN-TIME"] if t == time}
+                results &= matching_results
             else:
                 return "Invalid query"
-        results = sorted(list(planes))
+        results = sorted(list(results))
         
         return results if results else "No results found"

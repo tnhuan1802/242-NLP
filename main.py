@@ -45,7 +45,7 @@ def main():
         write_output("logical.txt", result["logical"])
         write_output("procedural.txt", result["procedural"])
         answer = db.query(result["procedural"])
-        write_output("answers.txt", f"{', '.join(answer)}")
+        write_output("answers.txt", f"{answer}")
 
 if __name__ == "__main__":
     main()

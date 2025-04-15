@@ -5,6 +5,17 @@ class DependencyParser:
     def __init__(self):
         # City names for dependency parsing
         self.cities = ["Huế", "TP. Hồ Chí Minh", "Đà Nẵng", "Hà Nội", "Khánh Hòa", "Hải Phòng"]
+        # City mapping
+        self.city_mappings = {
+            "Huế": "HUE",
+            "Tp. Hồ Chí Minh": "HCMC",
+            "Đà Nẵng": "ĐN",
+            "Hà Nội": "HN",
+            "Khánh Hòa": "KH",
+            "Hải Phòng": "HP"
+        }
+        # Load stopwords from file
+        self.stopwords = self.load_stopwords("input/vietnamese-stopwords.txt")
         # Golden-tree bank: Unified list of (head, dependent, label) relations
         self.golden_tree_bank = [
             # Query 1
@@ -21,32 +32,51 @@ class DependencyParser:
             # Query 2
             ("bay", "máy bay", "nsubj"),
             ("root", "bay", "root"),
-            ("Đà Nẵng", "từ", "from-loc"),
-            ("TP. Hồ Chí Minh", "đến", "to-loc"),
+            ("từ", "Đà Nẵng", "from-loc"),
+            ("đến", "TP. Hồ Chí Minh", "to-loc"),
             ("1:00HR", "mất", "wh-time"),
             ("bay", "1:00HR", "at-time"),
             ("bay", "?", "question"),
             # Query 3
+            ("hạ cánh", "máy bay", "nsubj"),
+            ("root", "hạ cánh", "root"),
+            ("Huế", "ở", "to-loc"),
+            ("hạ cánh", "?", "question"),
+            ("máy bay", "nào", "which"),
+            ("máy bay", "mã hiệu", "nmod"),
+            ("máy bay", "các", "det"),
+            ("hạ cánh", "cho biết", "discourse"),
+            ("cho biết", "Hãy", "aux"),
+            # Query 4: Máy bay nào xuất phát từ Tp.Hồ Chí Minh, lúc mấy giờ ?
             ("xuất phát", "máy bay", "nsubj"),
             ("root", "xuất phát", "root"),
-            ("Hà Nội", "từ", "from-loc"),
-            ("8:00HR", "lúc", "at"),
-            ("xuất phát", "8:00HR", "at-time"),
+            ("TP. Hồ Chí Minh", "từ", "from-loc"),
+            ("mấy giờ", "lúc", "at"),
+            ("xuất phát", "mấy giờ", "at-time"),
             ("xuất phát", "?", "question"),
-            # Query 4
-            ("thời gian", "bao lâu", "wh-time"),
-            ("Hải Phòng", "từ", "from-loc"),
-            # Query 5
-            ("đến", "VJ3", "nsubj"),
-            ("đến", "mấy giờ", "at-time")
+            ("máy bay", "nào", "which")
         ]
+
+    def load_stopwords(self, filepath):
+        """Load stopwords from a file."""
+        stopwords = set()
+        try:
+            with open(filepath, "r", encoding="utf-8") as f:
+                for line in f:
+                    word = line.strip()
+                    if word:
+                        stopwords.add(word)
+        except FileNotFoundError:
+            print(f"Warning: Stopwords file {filepath} not found. Using empty stopwords list.")
+        return stopwords
 
     def tokenize(self, sentence):
         """Tokenize using pyvi, convert underscores to spaces, merge city and time tokens."""
+        sentence = re.sub(r'\bmấy\s+giờ\b', 'mấy_giờ', sentence)
         sentence = re.sub(r'TP\.\s*Hồ Chí Minh', 'TP. Hồ Chí Minh', sentence)
         sentence = re.sub(r'Tp\.\s*Hồ Chí Minh', 'TP. Hồ Chí Minh', sentence)
-        sentence = re.sub(r'TP\.\s*HCM', 'TP. Hồ Chí Minh', sentence)
-        sentence = re.sub(r'Tp\.\s*HCM', 'TP. Hồ Chí Minh', sentence)
+        sentence = re.sub(r'TP\.\s*HCMC', 'TP. Hồ Chí Minh', sentence)
+        sentence = re.sub(r'Tp\.\s*HCMC', 'TP. Hồ Chí Minh', sentence)
         sentence = re.sub(r'(\d{1,2})\s*giờ', r'\1:00HR', sentence)
         sentence = re.sub(r'(\d{1,2})\s*:\s*(\d{2})\s*HR', r'\1:\2HR', sentence)
         sentence = re.sub(r'(\d{1,2})\s*:\s*(\d{2}HR)', r'\1:\2', sentence)
@@ -71,7 +101,9 @@ class DependencyParser:
             else:
                 merged_tokens.append(tokens[i])
                 i += 1
+        # Truncate stopwords
         return merged_tokens
+        # return [token for token in merged_tokens if token.lower() not in self.stopwords] 
 
     def get_dependencies(self, sentence):
         """Arc-eager dependency parser using golden-tree bank."""
@@ -87,6 +119,11 @@ class DependencyParser:
             if len(stack) < 1:
                 return False
             s_top = stack[-1]
+
+            # Check if s_top has root as a dependent
+            if f"root(root, {s_top})" in arcs:
+                return False
+
             # Check if s_top has been assigned as a dependent
             assigned_as_dep = any(f"{l}({h}, {s_top})" in arc for arc in arcs for h, d, l in self.golden_tree_bank if f"{l}({h}, {d})" == arc)
 
@@ -102,7 +139,7 @@ class DependencyParser:
         def find_action(stack, buffer):
             if len(stack) < 1:
                 return None, None
-            s_top = stack[-1]
+            s_top = stack[-1].lower()
             b_front = buffer[0] if buffer else None
             
             # Evaluate all possible actions
@@ -135,6 +172,7 @@ class DependencyParser:
 
         while buffer or len(stack) > 1:
             action, arc_info = find_action(stack, buffer)
+            # print(f"Action: {action}, Stack: {stack}, Buffer: {buffer}, Arcs: {arcs}")
             if action == "SHIFT" and buffer:
                 stack.append(buffer.pop(0))
             elif action == "LEFT-ARC" and stack and buffer:
