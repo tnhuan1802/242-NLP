@@ -2,3 +2,4 @@
 ['which(máy bay, nào)', 'nsubj(bay, máy bay)', 'root(root, bay)', 'from-loc(từ, Đà Nẵng)', 'to-loc(đến, TP. Hồ Chí Minh)', 'wh-time(1:00HR, mất)']
 ['det(máy bay, các)', 'nsubj(hạ cánh, máy bay)', 'root(root, hạ cánh)', 'to-loc(Huế, ở)', 'question(hạ cánh, ?)']
 ['which(máy bay, nào)', 'nsubj(xuất phát, máy bay)', 'root(root, xuất phát)', 'from-loc(TP. Hồ Chí Minh, từ)', 'at(mấy giờ, lúc)', 'at-time(xuất phát, mấy giờ)', 'question(xuất phát, ?)']
+['which(máy bay, nào)', 'nsubj(bay, máy bay)', 'root(root, bay)', 'from-loc(TP. Hồ Chí Minh, từ)', 'to-loc(Hà Nội, đến)', 'question(bay, ?)']

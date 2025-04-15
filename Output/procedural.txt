@@ -1,4 +1,5 @@
 (PRINT-ALL ?m1 (MÁY_BAY ?m1)(ATIME ?m1 HUE 13:30HR))
 (PRINT-ALL ?m1 (MÁY_BAY ?m1)(RUN-TIME ?m1 ĐN HCMC 1:00HR))
-(PRINT-ALL ?m1 (MÁY_BAY ?m1)(ATIME ?m1 HUE))
+(PRINT-ALL ?m1 (MÁY_BAY ?m1)(ATIME ?m1 HUE ?time))
 (PRINT-ALL ?m1 (MÁY_BAY ?m1)(DTIME ?m1 HCMC ?time))
+(PRINT-ALL ?m1 (MÁY_BAY ?m1)(RUN-TIME ?m1 HCMC HN ?time))

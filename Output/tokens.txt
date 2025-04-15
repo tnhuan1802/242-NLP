@@ -2,3 +2,4 @@
 ['Máy bay', 'nào', 'bay', 'từ', 'Đà Nẵng', 'đến', 'TP. Hồ Chí Minh', 'mất', '1:00HR', '?']
 ['Hãy', 'cho', 'biết', 'mã hiệu', 'các', 'máy bay', 'hạ cánh', 'ở', 'Huế', '?']
 ['Máy bay', 'nào', 'xuất phát', 'từ', 'TP. Hồ Chí Minh', ',', 'lúc', 'mấy giờ', '?']
+['Máy bay', 'nào', 'bay', 'từ', 'TP. Hồ Chí Minh', 'đến', 'Hà Nội', '?']

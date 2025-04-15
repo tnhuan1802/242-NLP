@@ -54,7 +54,14 @@ class DependencyParser:
             ("mấy giờ", "lúc", "at"),
             ("xuất phát", "mấy giờ", "at-time"),
             ("xuất phát", "?", "question"),
-            ("máy bay", "nào", "which")
+            ("máy bay", "nào", "which"),
+            # Query 5: Máy bay nào bay từ TP.Hồ Chí Minh đến Hà Nội ?
+            ("bay", "máy bay", "nsubj"),
+            ("root", "bay", "root"),
+            ("TP. Hồ Chí Minh", "từ", "from-loc"),
+            ("Hà Nội", "đến", "to-loc"),
+            ("bay", "?", "question"),
+            ("máy bay", "nào", "which"),
         ]
 
     def load_stopwords(self, filepath):
