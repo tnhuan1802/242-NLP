@@ -1,4 +1,3 @@
-# Models/database.py
 class FlightDatabase:
     def __init__(self, db_file):
         self.data = {"MÁY_BAY": [], "ATIME": [], "DTIME": [], "RUN-TIME": []}
@@ -39,24 +38,26 @@ class FlightDatabase:
         if not procedure or procedure[0] != "PRINT-ALL":
             return "Invalid query"
         
-        # Parse procedure list
         if len(procedure) < 2:
             return "Invalid query"
         var = procedure[1]
         conditions = procedure[2:]
         
         results = []
-        # Start with all flights from ATIME
-        planes = {p for p, _, _ in self.data["ATIME"]}
+        planes = {p for p, _, _ in self.data["ATIME"]} | {p for p, _, _, _ in self.data["RUN-TIME"]}
         for condition in conditions:
             pred, args = self.parse_condition(condition)
             if not pred:
                 continue
             if pred == "MÁY_BAY":
-                continue  # Already started with flights
+                continue
             elif pred == "ATIME" and len(args) >= 3:
                 plane_var, city, time = args
                 matching_planes = {p for p, c, t in self.data["ATIME"] if c == city and t == time}
+                planes &= matching_planes
+            elif pred == "RUN-TIME" and len(args) >= 4:
+                plane_var, source, dest, time = args
+                matching_planes = {p for p, s, d, t in self.data["RUN-TIME"] if s == source and d == dest and t == time}
                 planes &= matching_planes
             else:
                 return "Invalid query"

@@ -1,2 +1,1 @@
-['which(máy bay, nào)', 'nsubj(đến, máy bay)', 'root(root, đến)', 'to-loc(đến, thành phố)', '(thành phố, Huế)', 'at(13:30HR, lúc)', 'at-time(đến, 13:30HR)', 'question(đến, ?)']
-['which(máy bay, nào)']
+['which(Máy bay, nào)', 'nsubj(đến, Máy bay)', 'root(root, đến)', 'to-loc(đến, thành phố)', 'nmod(thành phố, Huế)', 'at(13:30HR, lúc)', 'at-time(đến, 13:30HR)', 'question(đến, ?)']

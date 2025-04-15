@@ -1,2 +1,1 @@
 (PRINT-ALL ?m1 (MÁY_BAY ?m1)(ATIME ?m1 HUE 13:30HR))
-(PRINT-ALL ?m1 (MÁY_BAY ?m1))
