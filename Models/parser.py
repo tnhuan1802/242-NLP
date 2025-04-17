@@ -98,6 +98,8 @@ class DependencyParser:
             ("xuất phát", "10:00HR", "at-time"),
             ("root", "xuất phát", "root"),
             ("xuất phát", "?", "question"),
+            # Query 12: Máy bay nào bay từ TP. Hồ Chí Minh đến Đà Nẵng mất 1:00HR ?
+            ("đến", "Đà Nẵng", "to-loc"),
         ]
 
     def load_stopwords(self, filepath):

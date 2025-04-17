@@ -9,3 +9,4 @@
 ['nmod(máy bay, VietJet Air)', 'nsubj(bay, máy bay)', 'root(root, bay)', 'to-loc(đến, thành phố)', 'which(thành phố, nào)', 'question(đến, ?)']
 ['which(máy bay, nào)', 'nsubj(bay, máy bay)', 'root(root, bay)', 'from-loc(từ, Hải Phòng)', 'to-loc(đến, Khánh Hòa)', 'question(đến, ?)']
 ['nmod(máy bay, VJ1)', 'nsubj(xuất phát, máy bay)', 'root(root, xuất phát)', 'from-loc(Hồ Chí Minh, từ)', 'at-time(xuất phát, 10:00HR)', 'question(xuất phát, ?)']
+['which(máy bay, nào)', 'nsubj(bay, máy bay)', 'root(root, bay)', 'from-loc(Hồ Chí Minh, từ)', 'to-loc(đến, Đà Nẵng)', 'wh-time(1:00HR, mất)']

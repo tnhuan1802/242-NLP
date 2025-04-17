@@ -9,3 +9,4 @@
 (PRINT-ALL ?dest (ATIME VJ ?dest ?time))
 (PRINT-ALL ?m1 (MÁY_BAY ?m1) (RUN-TIME ?plane HP KH ?time))
 (PRINT-ALL ?m1 (MÁY_BAY ?m1) (DTIME VJ1 HCMC 10:00HR))
+(PRINT-ALL ?m1 (MÁY_BAY ?m1) (RUN-TIME ?plane HCMC ĐN 1:00HR))

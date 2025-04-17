@@ -9,3 +9,4 @@
 [['NMOD', 'm1', 'VIETJET AIR'], ['PRED', 'm1', 'BAY'], ['LSUBJ', 'm1', 'MÁY BAY'], ['WHICH', 'm1', 'THÀNH PHỐ'], ['QUESTION', 'm1', '?']]
 [['WHICH', 'm1', 'MÁY BAY'], ['PRED', 'm1', 'BAY'], ['LSUBJ', 'm1', 'MÁY BAY'], ['FROM-LOC', 'm1', 'HẢI PHÒNG'], ['TO-LOC', 'm1', 'KHÁNH HÒA'], ['QUESTION', 'm1', '?']]
 [['NMOD', 'm1', 'VJ1'], ['PRED', 'm1', 'XUẤT PHÁT'], ['LSUBJ', 'm1', 'MÁY BAY'], ['FROM-LOC', 'm1', 'HỒ CHÍ MINH'], ['AT-TIME', 'm1', '10:00HR'], ['QUESTION', 'm1', '?']]
+[['WHICH', 'm1', 'MÁY BAY'], ['PRED', 'm1', 'BAY'], ['LSUBJ', 'm1', 'MÁY BAY'], ['FROM-LOC', 'm1', 'HỒ CHÍ MINH'], ['TO-LOC', 'm1', 'ĐÀ NẴNG'], ['WH-TIME', 'm1', '1:00HR']]

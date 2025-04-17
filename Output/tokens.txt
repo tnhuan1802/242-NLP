@@ -9,3 +9,4 @@
 ['Máy bay', 'VietJet Air', 'bay', 'đến', 'những', 'thành phố', 'nào', '?']
 ['máy bay', 'nào', 'bay', 'từ', 'Hải Phòng', 'đến', 'Khánh Hòa', '?']
 ['Máy bay', 'VJ1', 'xuất phát', 'từ', 'Hồ Chí Minh', '10:00HR', '?']
+['Máy bay', 'nào', 'bay', 'từ', 'Hồ Chí Minh', 'đến', 'Đà Nẵng', 'mất', '1:00HR', '?']
