@@ -10,3 +10,11 @@ Máy bay của hãng hàng không VietJet Air bay đến những thành phố n�
 Có máy bay nào bay từ Hải Phòng đến Khánh Hòa không ?
 Máy bay VJ1 xuất phát từ HCMC 10:00HR phải không ?
 Máy bay nào bay từ TP. Hồ Chí Minh đến Đà Nẵng mất 1:00HR ?
+Máy bay nào của VNAirline bay từ TP.HCM ra Huế mất 1 giờ ?
+Máy bay VJ5 có xuất phát từ Hà Nội không, lúc mấy giờ ?
+Máy bay nào hạ cánh ở Huế ?
+Máy bay nào cất cánh từ TP. Hồ Chí Minh ?
+Có máy bay nào bay từ Đà Nẵng ra Khánh Hòa không, nếu có thì thời gian bay là bao lâu ?
+Máy bay VN2 có xuất phát từ Đà Nẵng không, lúc mấy giờ ?
+Có mấy máy bay bay đến Hà Nội, kể tên máy bay !
+Có máy bay nào bay từ Hà Nội đến TP. Hồ Chí Minh không ?

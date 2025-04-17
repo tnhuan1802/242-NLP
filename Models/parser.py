@@ -51,7 +51,6 @@ class DependencyParser:
             ("root", "xuất phát", "root"),
             ("Hồ Chí Minh", "từ", "from-loc"),
             ("mấy giờ", "lúc", "at"),
-            ("xuất phát", "mấy giờ", "at-time"),
             ("xuất phát", "?", "question"),
             ("máy bay", "nào", "which"),
             # Query 5: Máy bay nào bay từ TP.Hồ Chí Minh đến Hà Nội ?
@@ -70,7 +69,6 @@ class DependencyParser:
             ("xuất phát", "?", "question"),
             ("xuất phát", "không", "discourse"),
             # Query 7: Thời gian máy bay VJ5 bay từ TP. Hà Nội đến Khánh Hòa mất mấy giờ ?
-            ("mất", "thời gian", "nsubj"),
             ("thời gian", "máy bay", "nmod"),
             ("máy bay", "VJ5", "nmod"),
             ("từ", "Hà Nội", "from-loc"),
@@ -100,6 +98,30 @@ class DependencyParser:
             ("xuất phát", "?", "question"),
             # Query 12: Máy bay nào bay từ TP. Hồ Chí Minh đến Đà Nẵng mất 1:00HR ?
             ("đến", "Đà Nẵng", "to-loc"),
+            # Query 13: Máy bay nào của VNAirline nào bay từ TP.HCM ra Huế mất 1 giờ ?
+            ("bay", "máy bay", "nsubj"),
+            ("root", "bay", "root"),
+            ("máy bay", "VNAirline", "nmod"),
+            ("từ", "Hồ Chí Minh", "from-loc"),
+            ("ra", "Huế", "to-loc"),
+            ("1:00HR", "mất", "wh-time"),
+            ("máy bay", "nào", "which"),
+            ("bay", "?", "question"),
+            # Query 14: Máy bay VJ5 có xuất phát từ Hà Nội không, lúc mấy giờ ?
+            ("máy bay", "VJ5", "nmod"),
+            ("từ", "Hà Nội", "from-loc"),
+            # Query 16: Máy bay nào cất cánh từ TP. Hồ Chí Minh?
+            ("cất cánh", "máy bay", "nsubj"),
+            ("root", "cất cánh", "root"),
+            ("cất cánh", "?", "question"),
+            # Query 16: Có máy bay nào bay từ Đà Nẵng ra Khánh Hòa không, nếu có thì thời gian bay là bao lâu ?
+            ("ra", "Khánh Hòa", "to-loc"),
+            # Query 18: Máy bay VN2 có xuất phát từ Đà Nắng không, lúc mấy giờ ?
+            ("máy bay", "VN2", "nmod"),
+            ("từ", "Đà Nẵng", "from-loc"),
+            # Query 19: Có mấy máy bay bay đến Hà Nội, kể tên máy bay !
+            ("bay", "!", "punctuation"),
+
         ]
 
     def load_stopwords(self, filepath):
@@ -120,9 +142,11 @@ class DependencyParser:
         # Preprocess to prevent VJ5 bay merging
         sentence = re.sub(r'\b(VJ5)\s+bay\b', r'\1* bay', sentence)
         sentence = re.sub(r'\bHCMC\b', r'Hồ Chí Minh', sentence)
+        sentence = re.sub(r'\bTP.HCM\b', r'Hồ Chí Minh', sentence)
         sentence = re.sub(r'\b(Hải\sPhòng)\s+không\b', r'\1 * không', sentence)
         # Preprocess to merge 'hãng hàng không VietJet Air' into 'VietJet Air'
         sentence = re.sub(r'hãng\s+hàng\s+không\s+VietJet\s+Air', 'VietJet Air', sentence)
+        sentence = re.sub(r'\bVNAirline bay\b', 'VNAirline *bay', sentence)
         # Preprocess specific patterns
         sentence = re.sub(r'\bmấy\s+giờ\b', 'mấy_giờ', sentence)
         sentence = re.sub(r'TP\.\s*Hồ Chí Minh', 'Hồ Chí Minh', sentence)
@@ -137,6 +161,9 @@ class DependencyParser:
         # Use underthesea word_tokenize
         tokens = word_tokenize(sentence)
         tokens = [t.replace("_", " ") for t in tokens]
+        unique_tokens = []
+        [unique_tokens.append(x) for x in tokens if x not in unique_tokens]
+        tokens = unique_tokens
         
         merged_tokens = []
         i = 0

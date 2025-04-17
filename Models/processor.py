@@ -7,7 +7,6 @@ class QueryProcessor:
 
     def process(self, query):
         """Process query through all steps."""
-        print('Processing query:', query)
         tokens = self.parser.tokenize(query)
         dependencies = self.parser.get_dependencies(query) or []
         grammatical = self.dependencies_to_grammatical(dependencies, query)
@@ -214,17 +213,17 @@ class QueryProcessor:
         
         # Construct predicate with fixed argument count
         if db_pred == "DTIME":
-            plane_arg = plane if plane else "?plane"
+            plane_arg = plane if plane else "?m1"
             source_arg = self.parser.city_mappings.get(source.title(), source) if source else "?source"
             time_arg = "?time" if time == "MẤY GIỜ" or not time else time
             conditions.append(f"(DTIME {plane_arg} {source_arg} {time_arg})")
         elif db_pred == "ATIME":
-            plane_arg = plane if plane else "?plane"
+            plane_arg = plane if plane else "?m1"
             dest_arg = self.parser.city_mappings.get(dest.title(), dest) if dest else "?dest"
             time_arg = "?time" if time == "MẤY GIỜ" or not time else time
             conditions.append(f"(ATIME {plane_arg} {dest_arg} {time_arg})")
         elif db_pred == "RUN-TIME":
-            plane_arg = plane if plane else "?plane"
+            plane_arg = plane if plane else "?m1"
             source_arg = self.parser.city_mappings.get(source.title(), source) if source else "?source"
             dest_arg = self.parser.city_mappings.get(dest.title(), dest) if dest else "?dest"
             time_arg = "?time" if time == "MẤY GIỜ" or not time else time
