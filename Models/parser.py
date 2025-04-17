@@ -90,7 +90,14 @@ class DependencyParser:
             ("máy bay", "VietJet Air", "nmod"),
             ("bay", "thành phố", "to-loc"),
             ("thành phố", "nào", "which"),
-            ("bay", "?", "question")
+            ("bay", "?", "question"),
+            # Query 11: Máy bay VJ1 xuất phát từ HCMC 10:00HR phải không?
+            ("xuất phát", "máy bay", "nsubj"),
+            ("máy bay", "VJ1", "nmod"),
+            ("từ", "HCMC", "from-loc"),
+            ("xuất phát", "10:00HR", "at-time"),
+            ("root", "xuất phát", "root"),
+            ("xuất phát", "?", "question"),
         ]
 
     def load_stopwords(self, filepath):
@@ -110,6 +117,7 @@ class DependencyParser:
         """Tokenize using underthesea, merge city and time tokens."""
         # Preprocess to prevent VJ5 bay merging
         sentence = re.sub(r'\b(VJ5)\s+bay\b', r'\1* bay', sentence)
+        sentence = re.sub(r'\bHCMC\b', r'Hồ Chí Minh', sentence)
         sentence = re.sub(r'\b(Hải\sPhòng)\s+không\b', r'\1 * không', sentence)
         # Preprocess to merge 'hãng hàng không VietJet Air' into 'VietJet Air'
         sentence = re.sub(r'hãng\s+hàng\s+không\s+VietJet\s+Air', 'VietJet Air', sentence)

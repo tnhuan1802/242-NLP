@@ -7,3 +7,5 @@
 ['Thời gian', 'máy bay', 'VJ5', 'bay', 'từ', 'Hà Nội', 'đến', 'Khánh Hòa', 'mất', 'mấy giờ', '?']
 ['máy bay', 'nào', 'xuất phát', 'từ', 'Hải Phòng', '?']
 ['Máy bay', 'VietJet Air', 'bay', 'đến', 'những', 'thành phố', 'nào', '?']
+['máy bay', 'nào', 'bay', 'từ', 'Hải Phòng', 'đến', 'Khánh Hòa', '?']
+['Máy bay', 'VJ1', 'xuất phát', 'từ', 'Hồ Chí Minh', '10:00HR', '?']

@@ -112,7 +112,7 @@ class QueryProcessor:
             elif g[0] == "PRED":
                 pred = g[2]
             elif g[0] == "LSUBJ":
-                args.append("[ MÁY BAY ]")
+                args.append("[MÁY BAY]")
             elif g[0] == "NSUBJ":
                 args.append(f"[NSUBJ {g[2]}]")
             elif g[0] == "TO-LOC":
