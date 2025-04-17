@@ -8,8 +8,8 @@
 Dự án xây dựng hệ thống hỏi đáp về các chuyến bay nội địa, đáp ứng yêu cầu bài tập lớn HK242. Hệ thống xử lý câu hỏi tiếng Việt, thực hiện các bước: phân đoạn từ, phân tích cú pháp phụ thuộc, tạo quan hệ văn phạm, dạng luận lý, dạng thủ tục, và truy vấn cơ sở dữ liệu để trả lời.
 
 **Cấu trúc thư mục**:
-- **Input/**: Chứa `query.txt` (20 câu hỏi) và `database.txt` (dữ liệu chuyến bay).
-- **Output/**: Chứa kết quả trung gian (`tokens.txt`, `dependencies.txt`) và câu trả lời (`answers.txt`).
+- **Input/**: Chứa `query.txt` (20 câu hỏi), `database.txt` (dữ liệu chuyến bay) và `vietnamese-stopwords.txt` (danh sách các stopwords trong phạm vi đề bài).
+- **Output/**: Chứa kết quả trung gian (`tokens.txt`, `dependencies.txt`, `grammatical.txt`, `logical.txt`, `procedural.txt`) và câu trả lời (`answers.txt`).
 - **models/**: Chứa các module:
   - `parser.py`: Phân đoạn từ và phân tích cú pháp phụ thuộc (dùng pyvi).
   - `database.py`: Quản lý cơ sở dữ liệu chuyến bay.
