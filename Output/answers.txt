@@ -1,5 +1,9 @@
-['VJ1']
+No results found
 ['VN2']
 ['VJ1', 'VN1']
 [('VJ3', '9:45HR'), ('VJ4', '8:30HR'), ('VN1', '10:00HR'), ('VN3', '4:30HR'), ('VN5', '17:00HR')]
 No results found
+[('VJ2', '9:30HR'), ('VN2', '15:30HR')]
+['VJ5']
+['VJ1', 'VJ2', 'VJ3', 'VJ4', 'VJ5', 'VN1', 'VN2', 'VN3', 'VN4', 'VN5']
+['HN', 'HP', 'HUE', 'KH', 'ĐN']
